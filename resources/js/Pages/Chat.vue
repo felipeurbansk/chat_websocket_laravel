@@ -114,18 +114,19 @@ export default {
   },
 
   methods: {
-    loadMessage(user_id) {
-      axios.get(`api/users/${user_id}`).then((result) => {
+    async loadMessage(user_id) {
+      await axios.get(`api/users/${user_id}`).then((result) => {
         this.userActive = result.data.user;
       });
 
-      axios.get(`api/messages/${user_id}`).then(async (result) => {
+      await axios.get(`api/messages/${user_id}`).then(async (result) => {
         this.messages = await result.data.messages;
-        this.scrollToBottom();
       });
+
+      this.scrollToBottom();
     },
-    sendMessage() {
-      axios
+    async sendMessage() {
+      await axios
         .post(`api/messages/store`, {
           content: this.message,
           to: this.userActive.id,
@@ -134,12 +135,12 @@ export default {
           const message = await result.data.message;
           this.messages = { ...this.messages, message };
           this.message = "";
-          this.scrollToBottom();
         });
+      this.scrollToBottom();
     },
     scrollToBottom() {
       if (this.messages) {
-        document.querySelector(".messagesBody:last-child")[0].scrollIntoView();
+        document.querySelector(".messagesBody:last-child").scrollIntoView();
       }
     },
   },
