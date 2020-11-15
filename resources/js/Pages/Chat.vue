@@ -92,12 +92,17 @@
 
 <script>
 import AppLayout from "@/Layouts/AppLayout";
+import store from "../store";
 
 export default {
   components: {
     AppLayout,
   },
-
+  computed: {
+    user() {
+      return store.state.user;
+    },
+  },
   data() {
     return {
       users: [],
@@ -111,6 +116,13 @@ export default {
     axios.get("api/users").then((result) => {
       this.users = result.data.users;
     });
+
+    Echo.private(`Chat.User.${this.user.id}`).listen(
+      ".SendMessage",
+      (event) => {
+        console.log({ event });
+      }
+    );
   },
 
   methods: {
@@ -126,17 +138,19 @@ export default {
       this.scrollToBottom();
     },
     async sendMessage() {
-      await axios
-        .post(`api/messages/store`, {
-          content: this.message,
-          to: this.userActive.id,
-        })
-        .then(async (result) => {
-          const message = await result.data.message;
-          this.messages = { ...this.messages, message };
-          this.message = "";
-        });
-      this.scrollToBottom();
+      if (this.message) {
+        await axios
+          .post(`api/messages/store`, {
+            content: this.message,
+            to: this.userActive.id,
+          })
+          .then(async (result) => {
+            const message = await result.data.message;
+            this.messages.push(message);
+            this.message = "";
+          });
+        this.scrollToBottom();
+      }
     },
     scrollToBottom() {
       if (this.messages) {

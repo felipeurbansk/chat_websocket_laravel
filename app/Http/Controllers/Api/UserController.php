@@ -26,4 +26,9 @@ class UserController extends Controller
     {
         return response()->json(['user' => $user], Response::HTTP_OK);
     }
+
+    public function me()
+    {
+        return response()->json(['user' => Auth::user()], Response::HTTP_OK);
+    }
 }

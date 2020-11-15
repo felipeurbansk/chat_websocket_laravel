@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('users', [UserController::class, 'index'])->name('users.all');
+    Route::get('user/me', [UserController::class, 'me'])->name('users.me');
     Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::get('messages/{user}', [MessageController::class, 'messages'])->name('messages.user');
     Route::post('messages/store', [MessageController::class, 'store'])->name('messages.store');
